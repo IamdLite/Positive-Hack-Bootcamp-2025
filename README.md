@@ -1,6 +1,6 @@
 # Positive Hack Bootcamp
 
-![Positive Hack Bootcamp Banner](https://via.placeholder.com/1200x200.png?text=Positive+Hack+Bootcamp+2025)
+![Positive Hack Bootcamp Banner](assets/Group_505.svg)
 
 Welcome to the **Positive Hack Bootcamp** repository! This repository documents the comprehensive curriculum of the Positive Hack Bootcamp, a transformative program designed to empower participants with practical white hat hacking skills through hands-on classes and labs. The bootcamp focuses on white hat hacking and industry-grade technics, tactics and procedures.
 
