@@ -1,4 +1,8 @@
-# Glossary
+# Glossary 
+
+# Lesson 1
+
+![Computer Infrastructure](assets/network-1.png)
 
 ### ADC (Domain Controller)
 A server that performs the functions of managing user and computer accounts in a Windows domain environment.
