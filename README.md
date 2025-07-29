@@ -22,10 +22,10 @@
 
 Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs, and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms knowledge of basic penetration testing, offensive security, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (and add a star) if you find it useful!
 
-[ ] Learn ethical hacking techniques and defensive security strategies.
-[ ] Gain hands-on experience with tools like Wireshark, Metasploit, and Burp Suite.
-[ ] Build projects that demonstrate real-world cybersecurity applications.
-[ ] Collaborate with peers to solve complex security challenges.
+- [ ] Learn ethical hacking techniques and defensive security strategies.
+- [ ] Gain hands-on experience with tools like Wireshark, Metasploit, and Burp Suite.
+- [ ] Build projects that demonstrate real-world cybersecurity applications.
+- [ ] Collaborate with peers to solve complex security challenges.
 
 This repository serves as the central hub for all bootcamp materials, including class notes, lab instructions, and supporting resources.
 
