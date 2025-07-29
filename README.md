@@ -1,8 +1,8 @@
-# Positive Hack Bootcamp
+# Positive Hack Bootcamp #
 
 ![Positive Hack Bootcamp Banner](assets/Group_505.svg)
 
-Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive secuirty, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (an add a star) if you find it usefull.
+Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive secuirty, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (an add a star) if you find it usefull
 ---
 
 ## Table of Contents
