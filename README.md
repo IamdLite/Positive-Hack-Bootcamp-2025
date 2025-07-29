@@ -1,4 +1,4 @@
-## Positive Hack Bootcamp 2025 
+# Positive Hack Bootcamp 2025
 
 ![Positive Hack Bootcamp Banner](assets/Group_505.svg)
 
