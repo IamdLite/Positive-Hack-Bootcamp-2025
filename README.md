@@ -1,8 +1,8 @@
 # Positive Hack Bootcamp 2025
 
-![Positive Hack Bootcamp Banner](assets/Group_505.svg)
+<!-- ![Positive Hack Bootcamp Banner](assets/Group_505.svg) -->
+Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs, and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms knowledge of basic penetration testing, offensive security, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (and add a star) if you find it useful!
 
-Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive security, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (and add a star) if you find it useful
 ---
 
 ## Table of Contents
@@ -106,19 +106,34 @@ Labs provide hands-on practice to reinforce class concepts. Each lab includes de
 
 ## CEWH Certification
 
-![Positive Hack Bootcamp Banner](assets/Group_563.svg)
+The **Certified Ethical White Hacker (CEWH)** certification validates skills in penetration testing, offensive security, and adherence to ethical hacking principles. Below is an overview of the certification process based on the bootcamp:
 
 1. **Exam Structure**  
-   - Objective: Perform network reconnaissance using Nmap and document findings.  
-   - Files: [Instructions](labs/lab1-nmap/instructions.md), [Sample Output](labs/lab1-nmap/sample-output.txt)  
-   - Tools: Nmap, Wireshark
+   - **Format**: Practical exam with real-world scenarios, including network reconnaissance, vulnerability assessment, and report writing.  
+   - **Duration**: 4 hours.  
+   - **Tools**: Nmap, Wireshark, Metasploit, Burp Suite (same as lab tools).  
+   - **Resources**: [CEWH Study Guide](resources/cewh-study-guide.md), [Sample Report Template](resources/cewh-report-template.md)  
+   - **Objective**: Demonstrate proficiency in identifying vulnerabilities, exploiting them ethically, and documenting findings per the White Hackers Code of Ethics.
+
+2. **Preparation Tips**  
+   - Complete all labs in the `labs/` folder to practice exam scenarios.  
+   - Review class notes in the `classes/` folder for theoretical knowledge.  
+   - Use [resources/cewh-tips.md](resources/cewh-tips.md) for additional strategies and practice questions.
+
+3. **Certification Benefits**  
+   - Validates entry-level ethical hacking skills recognized in the cybersecurity industry.  
+   - Prepares you for advanced certifications like CEH or OSCP.  
+   - Enhances your portfolio with practical, documented projects.
+
+*Note: Replace placeholder links (e.g., `resources/cewh-study-guide.md`) with actual file paths when available.*
+
+---
 
 ## Usage Instructions
 
 To get started with the bootcamp materials:
 
 1. **Clone the Repository**  
-
    ```bash
    git clone https://github.com/[Your-GitHub-Username]/positive-hack-bootcamp.git
    cd positive-hack-bootcamp
@@ -128,19 +143,18 @@ To get started with the bootcamp materials:
    Follow the [Prerequisites](#prerequisites) section to install required tools.
 
 3. **Explore Classes and Labs**  
-   - Navigate to the `classes/` folder for lecture materials.
+   - Navigate to the `classes/` folder for lecture materials.  
    - Visit the `labs/` folder for hands-on exercises.
 
 4. **Run Lab Scripts**  
-   Each lab includes a setup script (e.g., `setup.sh`) to configure the environment. Run:
-
+   Each lab includes a setup script (e.g., `setup.sh`) to configure the environment. Run:  
    ```bash
    chmod +x labs/labX/setup.sh
    ./labs/labX/setup.sh
    ```
 
 5. **Submit Deliverables**  
-   Follow lab instructions to submit reports or code via pull requests.
+   Follow lab instructions to submit reports or code via pull requests or as instructed by bootcamp organizers.
 
 ---
 
@@ -148,16 +162,16 @@ To get started with the bootcamp materials:
 
 To fully participate in the bootcamp, ensure you have:
 
-- **Hardware**: A laptop with at least 8GB RAM and 20GB free storage.
-- **Operating System**: Linux (e.g., Ubuntu 22.04), Windows 10/11, or macOS.
-- **Software**:
-  - Git: For cloning and managing the repository.
-  - Python 3.10+: For secure coding labs.
-  - VirtualBox or Docker: For running lab environments.
-  - Cybersecurity Tools: Nmap, Wireshark, Burp Suite, Metasploit (specific versions listed in [resources/tools.md](resources/tools.md)).
-- **Accounts**:
-  - GitHub account for repository access and contributions.
-  - [Optional] Acess to the CyberED labs platform for practice (currently under negotiation).
+- **Hardware**: A laptop with at least 8GB RAM and 20GB free storage.  
+- **Operating System**: Linux (e.g., Ubuntu 22.04), Windows 10/11, or macOS.  
+- **Software**:  
+  - Git: For cloning and managing the repository.  
+  - Python 3.10+: For secure coding labs.  
+  - VirtualBox or Docker: For running lab environments.  
+  - Cybersecurity Tools: Nmap, Wireshark, Burp Suite, Metasploit (specific versions listed in [resources/tools.md](resources/tools.md)).  
+- **Accounts**:  
+  - GitHub account for repository access and contributions.  
+  - [Optional] Access to the CyberED labs platform for practice (currently under negotiation).  
 
 *Note: Replace `[resources/tools.md]` with the actual path to your tools list.*
 
@@ -167,10 +181,10 @@ To fully participate in the bootcamp, ensure you have:
 
 We welcome contributions to improve this repository! To contribute:
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Make changes and commit (`git commit -m "Add your feature"`).
-4. Push to your branch (`git push origin feature/your-feature`).
+1. Fork the repository.  
+2. Create a new branch (`git checkout -b feature/your-feature`).  
+3. Make changes and commit (`git commit -m "Add your feature"`).  
+4. Push to your branch (`git push origin feature/your-feature`).  
 5. Open a pull request with a clear description of your changes.
 
 Please follow the [Code of Conduct](docs/code-of-conduct.md) and ensure your contributions align with the bootcamp’s goals.
@@ -193,14 +207,14 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For questions or s![Positive Hack Bootcamp Banner](assets/Group_505.svg)upport, reach out to:
+For questions or support, reach out to:
 
-- **GitHub**: [iamdlite](https://github.com/IamdLite)
-- **Email**: [diffouo44@gmail.com](mailto:diffouo44@gmail.com)
-- **Bootcamp Organizers**: [Link to official bootcamp website or contact form]
+- **GitHub**: [iamdlite](https://github.com/IamdLite)  
+- **Email**: [diffouo44@gmail.com](mailto:diffouo44@gmail.com)  
+- **Bootcamp Organizers**: [Positive Hack Bootcamp Website](https://camp.ptsecurity.com)
 
 Join the conversation on the official Positive Hack Bootcamp community platform: [Insert community link, e.g., Discord or Slack].
 
 ---
 
-*Happy hacking, and let’s make the digital world safer together!*![Positive Hack Bootcamp Banner](assets/Group_505.svg)
+*Happy hacking, and let’s make the digital world safer together!*
