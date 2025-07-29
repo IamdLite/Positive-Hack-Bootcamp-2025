@@ -2,7 +2,7 @@
 
 ![Positive Hack Bootcamp Banner](assets/Group_505.svg)
 
-Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive security, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (and add a star) if you find it useful.
+Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive security, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (and add a star) if you find it useful
 ---
 
 ## Table of Contents
@@ -118,6 +118,7 @@ Labs provide hands-on practice to reinforce class concepts. Each lab includes de
 To get started with the bootcamp materials:
 
 1. **Clone the Repository**  
+
    ```bash
    git clone https://github.com/[Your-GitHub-Username]/positive-hack-bootcamp.git
    cd positive-hack-bootcamp
@@ -132,6 +133,7 @@ To get started with the bootcamp materials:
 
 4. **Run Lab Scripts**  
    Each lab includes a setup script (e.g., `setup.sh`) to configure the environment. Run:
+
    ```bash
    chmod +x labs/labX/setup.sh
    ./labs/labX/setup.sh
@@ -198,7 +200,6 @@ For questions or s![Positive Hack Bootcamp Banner](assets/Group_505.svg)upport, 
 - **Bootcamp Organizers**: [Link to official bootcamp website or contact form]
 
 Join the conversation on the official Positive Hack Bootcamp community platform: [Insert community link, e.g., Discord or Slack].
-
 
 ---
 
