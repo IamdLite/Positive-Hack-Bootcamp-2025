@@ -2,8 +2,7 @@
 
 ![Positive Hack Bootcamp Banner](assets/Group_505.svg)
 
-Welcome to the **Positive Hack Bootcamp** repository! This repository documents the comprehensive curriculum of the Positive Hack Bootcamp, a transformative program designed to empower participants with practical white hat hacking skills through hands-on classes and labs. The bootcamp focuses on white hat hacking and industry-grade technics, tactics and procedures.
-
+Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the Positive Hack Bootcamp (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive secuirty, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (an add a star) if you find it usefull.
 ---
 
 ## Table of Contents
@@ -12,6 +11,7 @@ Welcome to the **Positive Hack Bootcamp** repository! This repository documents 
 - [Repository Structure](#repository-structure)
 - [Classes](#classes)
 - [Labs](#labs)
+- [CEWH Certification](#cewh-certification)
 - [Usage Instructions](#usage-instructions)
 - [Prerequisites](#prerequisites)
 - [Contributing](#contributing)
@@ -41,7 +41,7 @@ The repository is organized to provide easy access to all bootcamp materials:
 positive-hack-bootcamp/
 ├── classes/                # Lecture notes and slides for each class
 ├── labs/                   # Lab instructions and supporting files
-├── resources/              # Additional tools, scripts, and references
+├── resources/              # Additional tools, scripts, templates, and references
 ├── docs/                   # Supplemental documentation and guides
 └── README.md               # This file
 ```
@@ -104,6 +104,15 @@ Labs provide hands-on practice to reinforce class concepts. Each lab includes de
 
 ---
 
+## CEWH Certification
+
+![Positive Hack Bootcamp Banner](assets/Group_515.svg)
+
+1. **Exam Structure**  
+   - Objective: Perform network reconnaissance using Nmap and document findings.  
+   - Files: [Instructions](labs/lab1-nmap/instructions.md), [Sample Output](labs/lab1-nmap/sample-output.txt)  
+   - Tools: Nmap, Wireshark
+
 ## Usage Instructions
 
 To get started with the bootcamp materials:
@@ -129,7 +138,7 @@ To get started with the bootcamp materials:
    ```
 
 5. **Submit Deliverables**  
-   Follow lab instructions to submit reports or code via pull requests or as instructed by bootcamp organizers.
+   Follow lab instructions to submit reports or code via pull requests.
 
 ---
 
@@ -146,7 +155,7 @@ To fully participate in the bootcamp, ensure you have:
   - Cybersecurity Tools: Nmap, Wireshark, Burp Suite, Metasploit (specific versions listed in [resources/tools.md](resources/tools.md)).
 - **Accounts**:
   - GitHub account for repository access and contributions.
-  - [Optional] TryHackMe or Hack The Box account for additional practice.
+  - [Optional] Acess to the CyberED labs platform for practice (currently under negotiation).
 
 *Note: Replace `[resources/tools.md]` with the actual path to your tools list.*
 
@@ -173,8 +182,8 @@ Please follow the [Code of Conduct](docs/code-of-conduct.md) and ensure your con
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GitHub Issues](https://img.shields.io/github/issues/iamdlite/positive-hack-bootcamp)](https://github.com/iamdlite/positive-hack-bootcamp/issues)
-[![GitHub Stars](https://img.shields.io/github/stars/iamdlite/positive-hack-bootcamp)](https://github.com/iamdlite/positive-hack-bootcamp/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/IamdLite/positive-hack-bootcamp)](https://github.com/IamdLite/positive-hack-bootcamp/issues)
+[![GitHub Stars](https://img.shields.io/github/stars/IamdLite/positive-hack-bootcamp)](https://github.com/IamdLite/positive-hack-bootcamp/stargazers)
 
 *Note: Replace `[Your-GitHub-Username]` with your actual GitHub username in badge URLs.*
 
@@ -184,7 +193,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 For questions or support, reach out to:
 
-- **GitHub**: [iamdlite](https://github.com/iamdlite)
+- **GitHub**: [iamdlite](https://github.com/IamdLite)
 - **Email**: [diffouo44@gmail.com](mailto:diffouo44@gmail.com)
 - **Bootcamp Organizers**: [Link to official bootcamp website or contact form]
 
