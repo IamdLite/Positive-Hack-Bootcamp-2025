@@ -2,7 +2,7 @@
 
 ![Positive Hack Bootcamp Banner](assets/Group_505.svg)
 
-Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the Positive Hack Bootcamp (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive secuirty, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (an add a star) if you find it usefull.
+Welcome to the **Positive Hack 2025 Bootcamp** repository! In this repository, I curate all you need to know about the comprehensive curriculum of the [Positive Hack Bootcamp](https://camp.ptsecurity.com) (White Hat Hacker Professional by CyberED), a walkthrough of all the labs and my preparation notes and tips to pass the [CEWH Certification](https://labs.cyber-ed.ru/certification/CEWH). The CEWH certification is the Russian Ethical Hacking entry-level certification that confirms the knowledge of basic penetration testing, offensive secuirty, and adherence to the White Hackers Code of Ethics. I will also include resources, useful materials, report templates, and more to get you started. Fork the repository (an add a star) if you find it usefull.
 ---
 
 ## Table of Contents
@@ -106,7 +106,7 @@ Labs provide hands-on practice to reinforce class concepts. Each lab includes de
 
 ## CEWH Certification
 
-![Positive Hack Bootcamp Banner](assets/Group_515.svg)
+![Positive Hack Bootcamp Banner](assets/Group_563.svg)
 
 1. **Exam Structure**  
    - Objective: Perform network reconnaissance using Nmap and document findings.  
@@ -191,7 +191,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Contact
 
-For questions or support, reach out to:
+For questions or s![Positive Hack Bootcamp Banner](assets/Group_505.svg)upport, reach out to:
 
 - **GitHub**: [iamdlite](https://github.com/IamdLite)
 - **Email**: [diffouo44@gmail.com](mailto:diffouo44@gmail.com)
@@ -202,4 +202,4 @@ Join the conversation on the official Positive Hack Bootcamp community platform:
 
 ---
 
-*Happy hacking, and let’s make the digital world safer together!*
+*Happy hacking, and let’s make the digital world safer together!*![Positive Hack Bootcamp Banner](assets/Group_505.svg)
