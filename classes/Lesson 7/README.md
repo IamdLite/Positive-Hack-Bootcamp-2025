@@ -1,0 +1,1 @@
+# Day 7 - Privilege Escalation on Local Network Nodes (Windows)

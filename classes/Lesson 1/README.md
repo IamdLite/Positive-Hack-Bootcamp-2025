@@ -1,0 +1,1 @@
+# Day 1: Exploration in the customer's external infrastructure
