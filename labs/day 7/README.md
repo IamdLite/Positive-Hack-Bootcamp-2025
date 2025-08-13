@@ -35,8 +35,7 @@ Target Windows server must be accessible with valid domain credentials.
 2. **Connect to the workstation and check for vulnerability**
    - Connection with xfreerdp3 client with shared drive, clipboard etc
    ```bash
-   xfreerdp3 /v:<WORKSTATION_IP> /u:<USERNAME> /p:'<PASSWORD>' /dynamic-resolution /drive:linux,/home/kali/shared
- +clipboard
+   xfreerdp3 /v:<WORKSTATION_IP> /u:<USERNAME> /p:'<PASSWORD>' /dynamic-resolution /drive:linux,/home/kali/shared +clipboard
    ```
    - Check for vulnerability
    ```powershell
