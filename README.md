@@ -10,8 +10,6 @@
 - [Classes](#classes)
 - [Labs](#labs)
 - [CEWH Certification](#cewh-certification)
-- [Usage Instructions](#usage-instructions)
-- [Prerequisites](#prerequisites)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -37,11 +35,11 @@ The repository is organized to provide easy access to all bootcamp materials:
 
 ```
 positive-hack-bootcamp/
-├── classes/                # Lecture notes and slides for each class
-├── labs/                   # Lab instructions and supporting files
-├── resources/              # Additional tools, scripts, templates, and references
-├── docs/                   # Supplemental documentation and guides
-└── README.md               # This file
+├── assessments/       # Knowlegde check quizzes, CEWH exam tips and cheat sheet     
+├── classes/           # Lecture notes and slides for each class
+├── labs/              # Lab instructions and supporting files
+├── resources/         # Additional tools, manuals, exploits, (report) templates, and references
+└── README.md          # This file
 ```
 
 ---
