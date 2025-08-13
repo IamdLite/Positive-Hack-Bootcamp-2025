@@ -50,23 +50,35 @@ positive-hack-bootcamp/
 
 The bootcamp curriculum includes the following classes, each designed to build foundational and advanced cybersecurity knowledge:
 
-1. **Introduction to Cybersecurity**  
+1. **Exploration in the Customers External Infrastructure**  
    - Topics: Cybersecurity principles, threat landscapes, and ethical hacking basics.  
-   - Resources: [Slides](classes/intro-cybersecurity/slides.pdf), [Notes](classes/intro-cybersecurity/notes.md)
+   - Resources: [Slides](classes/Lesson%201)
 
-2. **Network Security Fundamentals**  
+2. **Hacking Web Applications**  
    - Topics: TCP/IP, packet analysis, and network scanning with Nmap.  
    - Resources: [Slides](classes/network-security/slides.pdf), [Cheat Sheet](classes/network-security/nmap-cheatsheet.md)
 
-3. **Web Application Security**  
+3. **Exploring Known Vulnerabilities in Network Services**  
    - Topics: OWASP Top 10, SQL injection, and XSS vulnerabilities.  
    - Resources: [Slides](classes/web-security/slides.pdf), [Checklist](classes/web-security/owasp-checklist.md)
 
-4. **Secure Coding Practices**  
+4. **Social Engineering**  
    - Topics: Writing secure code in Python and JavaScript, input validation, and error handling.  
    - Resources: [Slides](classes/secure-coding/slides.pdf), [Code Samples](classes/secure-coding/examples/)
 
-5. **Incident Response and Forensics**  
+5. **Privilege Escalation on Server Systems**  
+   - Topics: Log analysis, incident handling, and digital forensics basics.  
+   - Resources: [Slides](https://github.com/IamdLite/Positive-Hack-Bootcamp-2025/tree/main/classes/Lesson%201)
+
+6. **Network Pivoting**  
+   - Topics: Log analysis, incident handling, and digital forensics basics.  
+   - Resources: [Slides](https://github.com/IamdLite/Positive-Hack-Bootcamp-2025/tree/main/classes/Lesson%202)
+
+7. **Privilege Escalation on Local Nodes**  
+   - Topics: Log analysis, incident handling, and digital forensics basics.  
+   - Resources: [Slides](classes/incident-response/slides.pdf), [Tools Guide](classes/incident-response/tools.md)
+
+8. **Network Reconnaissance and Compromise**  
    - Topics: Log analysis, incident handling, and digital forensics basics.  
    - Resources: [Slides](classes/incident-response/slides.pdf), [Tools Guide](classes/incident-response/tools.md)
 
