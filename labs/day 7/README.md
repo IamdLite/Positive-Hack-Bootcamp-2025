@@ -257,7 +257,7 @@ Target Windows machine must be accessible with limited privileges.
    ```bash
    xfreerdp3 /u:<USER> /p:'<PASSWORD>' /compression /bpp:16 /v:<WORKSTATION_IP> /wallpaper /themes /window-drag /menu-anims /fonts /compression /rfx /rfx-mode:video /w:1024 /h:768 /network:auto /dynamic-resolution /drive:home,$(pwd)/www
    ```
-   
+
    - Download or copy mimikatz to the target workstation. 
 2. **Reconnaissance**
    - Confirm LSASS process is running.
@@ -303,9 +303,9 @@ Target Windows machine must be accessible with a user with limited permissions.
 #### Steps
 1. **Setup**
    - Connect to the machine via xfreerdp or xfreerdp3.
+   
    ```bash
-    xfreerdp /u:<USER> /p:'<PASSWORD>' /compression /bpp:16 /v:<WORKSTATION_IP> /wallpaper /themes /window-drag 
-/menu-anims /fonts /compression /rfx /rfx-mode:video /w:1024 /h:768 /network:auto /dynamic-resolution /drive:home,$(pwd)/www
+    xfreerdp /u:<USER> /p:'<PASSWORD>' /compression /bpp:16 /v:<WORKSTATION_IP> /wallpaper /themes /window-drag /menu-anims /fonts /compression /rfx /rfx-mode:video /w:1024 /h:768 /network:auto /dynamic-resolution /drive:home,$(pwd)/www
    ```
 
 2. **Check if vulnerable**
