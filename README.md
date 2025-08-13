@@ -92,13 +92,13 @@ The **Certified Ethical White Hacker (CEWH)** certification validates skills in 
    - **Format**: Practical exam with real-world scenarios, including network reconnaissance, vulnerability assessment, and report writing.  
    - **Duration**: 4 hours.  
    - **Tools**: Nmap, Wireshark, Metasploit, Burp Suite (same as lab tools).  
-   - **Resources**: [CEWH Study Guide](assessments/CEWH), [Sample Report Template](resources/reporting)  
+   - **Resources**: [CEWH Study Guide](assessments/CEWH), [Reporting Guide and Template](resources/reporting)  
    - **Objective**: Demonstrate proficiency in identifying vulnerabilities, exploiting them ethically, and documenting findings per the White Hackers Code of Ethics.
 
 2. **Preparation Tips**  
    - Complete all labs in the `labs/` folder to practice exam scenarios.  
    - Review class notes in the `classes/` folder for theoretical knowledge.  
-   - Use [resources/cewh-tips.md](assessments/CEWH) for additional strategies and practice questions.
+   - Use [assessments/CEWH](assessments/CEWH) for additional strategies and practice questions.
 
 3. **Certification Benefits**  
    - Validates entry-level ethical hacking skills recognized in the cybersecurity industry.  
