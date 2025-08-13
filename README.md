@@ -24,7 +24,7 @@ The CEWH certification is the Russian Ethical Hacking entry-level certification 
 
 - [ ] Learn ethical hacking techniques and defensive security strategies.
 - [ ] Gain hands-on experience with tools like BloodHound, Metasploit, and Burp Suite.
-- [ ] Build projects that demonstrate real-world cybersecurity applications.
+- [ ] Learn how to assess vulnerabilities, find their exploits, and exploit them.
 - [ ] Learn how to report red team operations and penetration testing engagements.
 
 ---
