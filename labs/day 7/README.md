@@ -254,8 +254,7 @@ Target Windows machine must be accessible with limited privileges.
 1. **Setup**
    - Connect to target via rdp.
    ```bash
-   xfreerdp3 /u:<USER> /p:'<PASSWORD>' /compression /bpp:16 /v:<WORKSTATION_IP> /wallpaper /themes /window-drag 
-/menu-anims /fonts /compression /rfx /rfx-mode:video /w:1024 /h:768 /network:auto /dynamic-resolution /drive:home,$(pwd)/www
+   xfreerdp3 /u:<USER> /p:'<PASSWORD>' /compression /bpp:16 /v:<WORKSTATION_IP> /wallpaper /themes /window-drag /menu-anims /fonts /compression /rfx /rfx-mode:video /w:1024 /h:768 /network:auto /dynamic-resolution /drive:home,$(pwd)/www
    ```
    - Download or copy mimikatz to the target workstation. 
 2. **Reconnaissance**
