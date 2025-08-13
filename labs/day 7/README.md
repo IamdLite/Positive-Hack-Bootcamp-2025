@@ -38,7 +38,7 @@ Target Windows server must be accessible with valid domain credentials.
    xfreerdp3 /v:<WORKSTATION_IP> /u:<USERNAME> /p:'<PASSWORD>' /dynamic-resolution /drive:linux,/home/kali/shared +clipboard
    ```
    - Check for vulnerability
-   ```powershell
+   ```bash
    reg query HKCU\Software\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
    ```
    - If vulnerable, it will return `AlwaysInstallElevated    REG_DWORD    0x1`
