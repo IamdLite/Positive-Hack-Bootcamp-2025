@@ -105,8 +105,6 @@ The **Certified Ethical White Hacker (CEWH)** certification validates skills in 
    - Prepares you for advanced certifications like CEH or OSCP.  
    - Enhances your portfolio with practical, documented projects.
 
-*Note: Replace placeholder links (e.g., `resources/cewh-study-guide.md`) with actual file paths when available.*
-
 ---
 
 ## Contributing
@@ -129,8 +127,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Issues](https://img.shields.io/github/issues/IamdLite/positive-hack-bootcamp)](https://github.com/IamdLite/positive-hack-bootcamp/issues)
 [![GitHub Stars](https://img.shields.io/github/stars/IamdLite/positive-hack-bootcamp)](https://github.com/IamdLite/positive-hack-bootcamp/stargazers)
-
-*Note: Replace `[Your-GitHub-Username]` with your actual GitHub username in badge URLs.*
 
 ---
 
