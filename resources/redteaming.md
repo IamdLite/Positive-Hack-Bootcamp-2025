@@ -1,6 +1,6 @@
 # Red Team Resources
 
-Simple table of red team resources with categories, names, and links for easy reference in your GitHub repo.
+Simple table of red team resources with categories, names, and links gotten from PHCamp and my cybersecurity internship.
 
 ## Resources Table
 
