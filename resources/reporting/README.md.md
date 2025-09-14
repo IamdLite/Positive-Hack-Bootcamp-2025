@@ -1,4 +1,4 @@
-# Report on the Results of the Certification Test **"White Hacker"**
+# My Report on the Results of the Certification Test **"White Hacker." Feel free to use it as a template**
 
 **Candidate:** Diffouo Fopa Esdras                                                                                                                       **Portfolio Website**: [esdrasfopa.vercel.app](https://esdrasfopa.vercel.app) , [Positive Hack Camp Github Repo](https://github.com/IamdLite/Positive-Hack-Bootcamp-2025)                                                                                                                                           **My Hacking Community**: [eOfbit Society](https://t.me/endOfilebitsociety) , **Medium blog**: [iamdlite](https://iamdlite.medium.com/)                                                                                                         **Email:** diffouo44@gmail.com                                                                                                                                                                     **Date:** 14/09/2025 
 **Version:** 1.0
