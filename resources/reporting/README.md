@@ -42,7 +42,7 @@ We were tasked to hack the server, escalate our privileges and read a flag from 
 nmap -sCV 10.10.0.40 # Quick scan to get running services and their versions on common ports
 ```
 
-![Discovery and reconnaissance Linux](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/windows_task_1.png)
+![Discovery and reconnaissance Linux](https://github.com/IamdLite/Positive-Hack-Bootcamp-2025/blob/main/resources/reporting/screenshots/linux_task_1.png)
 
 We see that `Apache Tomcat/Coyote JSP engine 1.1` is running `Struts2` on port 80. 
 
